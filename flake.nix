@@ -1,13 +1,24 @@
 {
-  outputs = { self }: {
+  outputs = { self }: let
+    firstChar     = builtins.substring 0 1;
+    dropFirstChar = string: builtins.substring 1 (builtins.stringLength string) string;
+
+    lastChar     = string: builtins.substring (builtins.stringLength string - 1) 1 string;
+    dropLastChar = string: builtins.substring 0 (builtins.stringLength string - 1) string;
+
+    getType = item: item._type or null;
+
     escape = s: s; # TODO
 
-    __findFile = _: name: if builtins.substring 0 1 name == "." then {
+    domListToString = _: escape "TODO";
+  in {
+
+    __findFile = _: name: if firstChar name == "." then {
       _type = "end";
-      _name = builtins.substring 1 (builtins.stringLength name) name;
-    } else if builtins.substring (builtins.stringLength name - 1) 1 name == "." then {
+      _name = dropFirstChar name;
+    } else if lastChar name == "." then {
       _type = "lone";
-      _name = builtins.substring 0 (builtins.stringLength name - 1) name;
+      _name = dropLastChar name;
     } else {
       _type = "start";
       _name = name;
@@ -15,10 +26,10 @@
       _accum = [];
       __functor = let
         impl = this: next: if
-          next._type or null == "end" &&
+          getType next == "end" &&
           next._name == this._name
         then
-          this._accum
+          domListToString this
         else this // {
           _accum = this._accum ++ [ next ];
           __functor = impl;
