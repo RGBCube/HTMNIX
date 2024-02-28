@@ -74,15 +74,6 @@
         };
     };
 
-    result = let inherit (self) __findFile; in
-      <html>
-        <head>
-          <meta.>{charset="UTF-8";}
-          <title>"Hello, internet!"<.title>
-        <.head>
-        <body>
-          <p>"What the fuck is this?"<.p>
-        <.body>
-      <.html>;
+    result = builtins.scopedImport { inherit (self) raw __findFile; } ./html.nix;
   };
 }
