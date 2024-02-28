@@ -44,12 +44,12 @@ lib: let
   else
     lib.strings.escapeXML string;
 
-  raw = string: derivation {
+  raw = string: toString (derivation {
     name       = "_";
     system     = "_";
     builder    = "_";
     rawContent = "${startMarker}${yeet string}${endMarker}";
-  };
+  });
 in {
   inherit escape raw;
 }

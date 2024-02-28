@@ -43,8 +43,8 @@
       outPath = dottedNameToTag name;
 
       __functor = this: next:
-        # Not an attrset or an escaped one. Just toString it and add it onto the HTML.
-        if builtins.isAttrs next -> lib.hasSuffix "-_" next.outPath or ""
+        # Not an attrset. Just add it onto the HTML.
+        if !builtins.isAttrs next
         then this // {
           outPath = (toString this) + escape (toString next);
         }
