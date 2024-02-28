@@ -1,7 +1,5 @@
 *
 
-!site/
-
 !.gitignore
 !flake.lock
 

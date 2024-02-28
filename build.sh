@@ -19,7 +19,7 @@ for file in $(find site -type f); do
   if [[ ! "$file" =~ ^_ ]]; then
     if [[ "$file" =~ .nix$ ]]; then
       echo "Processing file $file to _${file%.nix}.html..."
-      TARGET_FILE="$file" nix eval "$FLAKE_REF#result" --apply toString --raw > "_${file%.nix}.html"
+      TARGET_FILE=$(realpath "$file") nix eval "$FLAKE_REF#result" --impure --raw --apply toString > "_${file%.nix}.html"
       echo "Done!"
     else
       echo "Copying file $file to _$file..."
