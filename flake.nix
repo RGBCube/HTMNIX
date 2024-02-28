@@ -31,10 +31,11 @@
   in {
     inherit (escapix) raw;
 
-    call = builtins.scopedImport {
-      inherit (self) raw call __findFile;
+    call = builtins.scopedImport (self // {
       inherit lib;
-    };
+    });
+
+    withDoctype = body: "<!DOCTYPE html>${body}";
 
     result = self.call /${builtins.getEnv "TARGET_FILE"};
 
