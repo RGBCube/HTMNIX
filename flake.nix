@@ -6,19 +6,18 @@
   outputs = { self, nixpkgslib }: let
     inherit (nixpkgslib) lib;
 
-    first     = n: builtins.substring 0 n;
-    dropFirst = n: string: builtins.substring n (builtins.stringLength string - n) string;
+    first     = n: lib.substring 0 n;
+    dropFirst = n: string: lib.substring n (lib.stringLength string - n) string;
 
-    last     = n: string: builtins.substring (builtins.stringLength string - n) n string;
-    dropLast = n: string: builtins.substring 0 (builtins.stringLength string - n) string;
+    last     = n: string: lib.substring (lib.stringLength string - n) n string;
+    dropLast = n: string: lib.substring 0 (lib.stringLength string - n) string;
 
     escapix = import ./escape.nix lib;
     inherit (escapix) escape;
 
     attrsetToHtmlAttrs = attrs:
-      builtins.concatStringsSep " "
-      (builtins.attrValues
-        (builtins.mapAttrs (k: v: ''${k}="${escape (toString v)}"'') attrs));
+      lib.concatStringsSep " "
+        (lib.mapAttrsToList (k: v: ''${k}="${escape (toString v)}"'') attrs);
 
     dottedNameToTag = name:
       if first 1 name == "."
@@ -44,7 +43,7 @@
 
       __functor = this: next:
         # Not an attrset. Just add it onto the HTML.
-        if !builtins.isAttrs next
+        if !lib.isAttrs next
         then this // {
           outPath = (toString this) + escape (toString next);
         }
@@ -61,7 +60,7 @@
         # This will output the following HTML:
         #
         #     <foo bar="baz" fizz="fuzz">
-        else if builtins.isAttrs next && !(next ? outPath)
+        else if lib.isAttrs next && !(next ? outPath)
         then let
           lastElementIsTag         = last 1 (toString this) == ">";
           lastElementIsSelfClosing = last 2 (toString this) == "/>";

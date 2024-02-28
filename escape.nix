@@ -10,7 +10,7 @@ lib: let
   yeet = string: builtins.unsafeDiscardStringContext (builtins.unsafeDiscardOutputDependency string);
 
   getContent = drvPath: let
-    drv     = builtins.readFile drvPath;
+    drv     = lib.readFile drvPath;
     isValid = builtins.match ".*${lib.escapeRegex startMarker}.*${lib.escapeRegex endMarker}.*" drv != null;
     content = lib.pipe drv [
       (lib.splitString startMarker)
@@ -40,7 +40,7 @@ lib: let
     final = recurseSubDrv ctxNames [ string ];
     final' = assert (lib.length final == 1); lib.head final;
   in if builtins.hasContext string then
-    builtins.replaceStrings [ ''\"'' ''\n'' ] [ ''"'' "\n" ] (yeet final')
+    lib.replaceStrings [ ''\"'' ''\n'' ] [ ''"'' "\n" ] (yeet final')
   else
     lib.strings.escapeXML string;
 
