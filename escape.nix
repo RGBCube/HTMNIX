@@ -40,7 +40,7 @@ lib: let
     final = recurseSubDrv ctxNames [ string ];
     final' = assert (lib.length final == 1); lib.head final;
   in if builtins.hasContext string then
-    yeet final'
+    builtins.replaceStrings [ ''\"'' ''\n'' ] [ ''"'' "\n" ] (yeet final')
   else
     lib.strings.escapeXML string;
 
