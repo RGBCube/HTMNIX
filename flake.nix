@@ -1,4 +1,6 @@
 {
+  description = "Write composeable HTML with Nix!";
+
   outputs = { self }: let
     first     = n: builtins.substring 0 n;
     dropFirst = n: string: builtins.substring n (builtins.stringLength string - n) string;
