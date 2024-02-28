@@ -29,6 +29,13 @@
   in {
     inherit (escapix) raw;
 
+    call = builtins.scopedImport {
+      inherit (self) raw call __findFile;
+      inherit (nixpkgslib) lib;
+    };
+
+    result = self.call /${builtins.getEnv "TARGET_FILE"};
+
     __findFile = _: name: {
       outPath = dottedNameToTag name;
 
@@ -73,7 +80,5 @@
           outPath = "${this}${next}";
         };
     };
-
-    result = builtins.scopedImport { inherit (self) raw __findFile; inherit (nixpkgslib) lib; } /${builtins.getEnv "TARGET_FILE"};
   };
 }
