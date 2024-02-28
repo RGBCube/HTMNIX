@@ -1,14 +1,16 @@
 {
   description = "Write composeable HTML with Nix!";
 
-  outputs = { self }: let
+  inputs.lib.url = "github:nix-community/nixpkgs.lib";
+
+  outputs = { self, lib }: let
     first     = n: builtins.substring 0 n;
     dropFirst = n: string: builtins.substring n (builtins.stringLength string - n) string;
 
     last     = n: string: builtins.substring (builtins.stringLength string - n) n string;
     dropLast = n: string: builtins.substring 0 (builtins.stringLength string - n) string;
 
-    escapix = import ./escape.nix;
+    escapix = import ./escape.nix lib.lib;
     inherit (escapix) escape;
 
     attrsetToHtmlAttrs = attrs:

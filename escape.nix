@@ -1,8 +1,6 @@
 # Taken from https://github.com/nrabulinski/cursed-nix. Huge thanks!
 
-let
-  lib = (import <nixpkgs> {}).lib;
-
+lib: let
   startMarker = "__START__";
   endMarker   = "__END__";
 
