@@ -14,13 +14,9 @@ for file in $(find site -type f); do
     if [[ "$file" =~ .nix$ ]]; then
       echo "Processing file $file to _${file%.nix}.html..."
       TARGET_FILE=$(realpath "$file") nix eval "${HTMNIX_REF:-github:RGBCube/HTMNIX}#result" --impure --raw --apply toString > "_${file%.nix}.html"
-      echo "Done!"
     else
       echo "Copying file $file to _$file..."
       cp "$file" "_$file"
-      echo "Done!"
     fi
   fi
 done
-
-echo "All done!"
