@@ -8,7 +8,8 @@
     last     = n: string: builtins.substring (builtins.stringLength string - n) n string;
     dropLast = n: string: builtins.substring 0 (builtins.stringLength string - n) string;
 
-    escape = string: string; # TODO
+    escapix = import ./escape.nix;
+    inherit (escapix) escape;
 
     attrsetToHtmlAttrs = attrs:
       builtins.concatStringsSep " "
@@ -24,6 +25,8 @@
 
       else "<${name}>";
   in {
+    inherit (escapix) raw;
+
     __findFile = _: name: {
       outPath = dottedNameToTag name;
 
