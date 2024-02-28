@@ -1,41 +1,71 @@
 {
   outputs = { self }: let
-    firstChar     = builtins.substring 0 1;
-    dropFirstChar = string: builtins.substring 1 (builtins.stringLength string) string;
+    first     = n: builtins.substring 0 n;
+    dropFirst = n: string: builtins.substring n (builtins.stringLength string - n) string;
 
-    lastChar     = string: builtins.substring (builtins.stringLength string - 1) 1 string;
-    dropLastChar = string: builtins.substring 0 (builtins.stringLength string - 1) string;
+    last     = n: string: builtins.substring (builtins.stringLength string - n) n string;
+    dropLast = n: string: builtins.substring 0 (builtins.stringLength string - n) string;
 
-    getType = item: item._type or null;
+    escape = string: string; # TODO
 
-    escape = s: s; # TODO
+    attrsetToHtmlAttrs = attrs:
+      builtins.concatStringsSep " "
+      (builtins.attrValues
+        (builtins.mapAttrs (k: v: ''${k}="${escape (toString v)}"'') attrs));
 
-    domListToString = _: escape "TODO";
+    dottedNameToTag = name:
+      if first 1 name == "."
+      then "</${dropFirst 1 name}>"
+
+      else if last 1 name == "."
+      then "<${dropLast 1 name}/>"
+
+      else "<${name}>";
   in {
+    __findFile = _: name: {
+      outPath = dottedNameToTag name;
 
-    __findFile = _: name: if firstChar name == "." then {
-      _type = "end";
-      _name = dropFirstChar name;
-    } else if lastChar name == "." then {
-      _type = "lone";
-      _name = dropLastChar name;
-    } else {
-      _type = "start";
-      _name = name;
-
-      _accum = [];
-      __functor = let
-        impl = this: next: if
-          getType next == "end" &&
-          next._name == this._name
-        then
-          domListToString this
+      __functor = this: next:
+        # Not an attrset. Just escape and add it onto the HTML.
+        if !builtins.isAttrs next
+        then this // {
+          outPath = (toString this) + escape (toString next);
+        }
+        
+        # An attrset. But not a tag. This means it must be HTML attributes.
+        # We need to insert it right before the '>' or '/>' at the end of our string
+        # and error if it doesn't end with a tag.
+        #
+        # Due to how it is implemented, passing multiple attrsets to a single
+        # tag to combine them works. Here is an example:
+        #
+        #     <foo>{bar="baz";}{fizz="fuzz";}
+        #
+        # This will output the following HTML:
+        #
+        #     <foo bar="baz" fizz="fuzz">
+        else if builtins.isAttrs next && !(next ? outPath)
+        then let
+          lastElementIsTag         = last 1 (toString this) == ">";
+          lastElementIsSelfClosing = last 2 (toString this) == "/>";
+        in this // {
+          outPath = let
+            attrs = attrsetToHtmlAttrs next;
+          in if !lastElementIsTag then
+            throw "Attributes must come right after a tag: '${if attrs != "" then attrs else "<empty attrs>"}'"
+          else
+            (dropLast (if lastElementIsSelfClosing then 2 else 1) (toString this))
+            + (if attrs != "" then " " else "") # Keep it pretty.
+            + attrs
+            + (if lastElementIsSelfClosing then "/>" else ">");
+        }
+        
+        # The next element is a tag with the `outPath` attribute which means it's a
+        # start, closing or self closing tag. Just append it onto our string.
         else this // {
-          _accum = this._accum ++ [ next ];
-          __functor = impl;
+          outPath = "${this}${next}";
         };
-      in impl;
-     };
+    };
 
     result = let inherit (self) __findFile; in
       <html>
