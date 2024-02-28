@@ -9,17 +9,11 @@ for dir in $(find site -type d); do
   mkdir -p "_$dir"
 done
 
-if [[ "$HTMNIX_LOCAL" == 1 ]]; then
-  FLAKE_REF=.
-else
-  FLAKE_REF=github:RGBCube/HTMNIX
-fi
-
 for file in $(find site -type f); do
   if [[ ! "$file" =~ ^_ ]]; then
     if [[ "$file" =~ .nix$ ]]; then
       echo "Processing file $file to _${file%.nix}.html..."
-      TARGET_FILE=$(realpath "$file") nix eval "$FLAKE_REF#result" --impure --raw --apply toString > "_${file%.nix}.html"
+      TARGET_FILE=$(realpath "$file") nix eval "${HTMNIX_REF:-github:RGBCube/HTMNIX}#result" --impure --raw --apply toString > "_${file%.nix}.html"
       echo "Done!"
     else
       echo "Copying file $file to _$file..."
