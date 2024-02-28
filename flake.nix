@@ -1,16 +1,16 @@
 {
   description = "Write composeable HTML with Nix!";
 
-  inputs.lib.url = "github:nix-community/nixpkgs.lib";
+  inputs.nixpkgslib.url = "github:nix-community/nixpkgs.lib";
 
-  outputs = { self, lib }: let
+  outputs = { self, nixpkgslib }: let
     first     = n: builtins.substring 0 n;
     dropFirst = n: string: builtins.substring n (builtins.stringLength string - n) string;
 
     last     = n: string: builtins.substring (builtins.stringLength string - n) n string;
     dropLast = n: string: builtins.substring 0 (builtins.stringLength string - n) string;
 
-    escapix = import ./escape.nix lib.lib;
+    escapix = import ./escape.nix nixpkgslib.lib;
     inherit (escapix) escape;
 
     attrsetToHtmlAttrs = attrs:
@@ -74,6 +74,6 @@
         };
     };
 
-    result = builtins.scopedImport { inherit (self) raw __findFile; inherit lib; } /${builtins.getEnv "TARGET_FILE"};
+    result = builtins.scopedImport { inherit (self) raw __findFile; inherit (nixpkgslib) lib; } /${builtins.getEnv "TARGET_FILE"};
   };
 }
