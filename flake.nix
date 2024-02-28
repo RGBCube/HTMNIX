@@ -74,6 +74,9 @@
         };
     };
 
-    result = builtins.scopedImport { inherit (self) raw __findFile; } ./html.nix;
+    result = let
+      targetFile = builtins.getEnv "TARGET_FILE";
+      targetFile' = if targetFile != "" then targetFile else "site/index.nix";
+    in builtins.scopedImport { inherit (self) raw __findFile; } ./${targetFile'};
   };
 }

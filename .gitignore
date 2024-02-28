@@ -1,0 +1,9 @@
+*
+
+!site/
+
+!.gitignore
+!flake.lock
+
+!*.nix
+!*.sh
