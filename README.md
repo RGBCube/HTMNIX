@@ -17,6 +17,9 @@ Here is an example snippet:
 <.html>
 ```
 
+[Here is an example site created using HTMNIX and the `build.sh` in
+the current directory that you are supposed to vendor](https://github.com/RGBCube/NixSite)
+
 You might be wondering, _How?_
 
 If you are, go read my [blog post](https://rgbcu.be/blog/htmnix)!
