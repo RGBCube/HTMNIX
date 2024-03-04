@@ -1,4 +1,4 @@
-# Taken from https://github.com/nrabulinski/cursed-nix. Huge thanks!
+# (Mostly) Taken from https://github.com/nrabulinski/cursed-nix. Huge thanks!
 
 lib: let
   startMarker = "__START__";
