@@ -131,7 +131,7 @@ Call another Nix file as a HTMNIX file, with all the magic:
   <p>comment<.p>
 <.div>
 
-# -- inside index.nix --
+# -- inside html.nix --
 let
   comments = [
     { name = "John Doe"; comment = "Very nice service, reversed my hair loss!"; }
