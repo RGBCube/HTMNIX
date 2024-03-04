@@ -21,6 +21,13 @@ You might be wondering, _How?_
 
 If you are, go read my [blog post](https://rgbcu.be/blog/htmnix)!
 
+But before that you may want to try it for yourself!
+You can! Just enter the REPL by running this command:
+
+```sh
+nix repl github:RGBCube/HTMNIX
+```
+
 ## Provided Functions
 
 These are the functions and variables provided by HTMNIX
