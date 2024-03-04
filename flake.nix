@@ -27,6 +27,9 @@
       then "<${dropLast 1 name}/>"
 
       else "<${name}>";
+
+    # When doing <name>, these won't return HTML tags.
+    propagatedFindFiles = [ "nixpkgs" ];
   in {
     inherit (escapix) raw;
     inherit lib;
@@ -37,12 +40,17 @@
 
     result = self.call /${builtins.getEnv "TARGET_FILE"};
 
-    __findFile = _: name: {
+    __findFile = env: name: if builtins.elem name propagatedFindFiles then __findFile env name else {
       outPath = dottedNameToTag name;
 
       __functor = this: next:
-        # Not an attrset. Just add it onto the HTML.
-        if !lib.isAttrs next
+        # Is a list. Consume each item. Treat it as if it was passed in one by one.
+        if lib.isList next
+        then lib.foldl' (this: this) (this (lib.head next)) (lib.tail next)
+
+        # Not an attrset or list.
+        # Just add it onto the HTML after stringifying it.
+        else if !lib.isAttrs next
         then this // {
           outPath = (toString this) + escape (toString next);
         }
