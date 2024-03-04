@@ -146,7 +146,7 @@ Insert a raw unescaped string into your HTML:
 Call another Nix file as a HTMNIX file, with all the magic:
 
 ```nix
-# -- inside customer.nix --
+# -- inside comment.nix --
 { name, comment }:
 
 <div>{class="review";}
