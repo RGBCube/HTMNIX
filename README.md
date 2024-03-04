@@ -70,6 +70,30 @@ which will be available in every HTMNIX file and the HTMNIX REPL
 > - `let in`'s.
 > - Expressions that have spaces in them.
 
+> Adding onto the previous note, if you want to see how your
+> HTMNIX file is **actually** evaluated, you can run the following command:
+>
+> ```sh
+> nix-instantiate --parse html.nix
+> ```
+>
+> This will insert a ton of parens everywhere, thus un-ambiguating the parsing.
+> Here is an example:
+>
+> ```nix
+> nix-instantiate --parse - << :end
+> <ul>
+>   <li>"That's all!"<.li>
+> <.ul>
+> :end
+> ```
+>
+> This produces the following output:
+>
+> ```nix
+> (__findFile __nixPath "ul" (__findFile __nixPath "li") "That's all!" (__findFile __nixPath ".li") (__findFile __nixPath ".ul"))
+> ```
+
 Create a directory listing:
 
 ```nix
@@ -139,6 +163,7 @@ let
     { name = "Skid"; comment = "<script>alert('Got you!')</script>"; } # Does not work as all strings are escaped by default.
   ];
 in
+
 <ul>
   (map
     (comment: <li>(call ./comment.nix comment)<.li>)
