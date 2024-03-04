@@ -29,10 +29,9 @@
       else "<${name}>";
   in {
     inherit (escapix) raw;
+    inherit lib;
 
-    call = builtins.scopedImport (self // {
-      inherit lib;
-    });
+    call = builtins.scopedImport self;
 
     withDoctype = body: "<!DOCTYPE html>${body}";
 
