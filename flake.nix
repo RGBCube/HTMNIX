@@ -36,7 +36,7 @@
 
     call = builtins.scopedImport self;
 
-    withDoctype = body: "<!DOCTYPE html>${body}";
+    DOCTYPE = self.__findFile {} "!DOCTYPE html";
 
     result = self.call /${builtins.getEnv "TARGET_FILE"};
 
