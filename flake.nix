@@ -48,7 +48,23 @@
         if lib.isList next
         then lib.foldl' (this: this) (this (lib.head next)) (lib.tail next)
 
-        # Not an attrset or list.
+        # We are passed in a functor/function that doesn't have an outPath meaning
+        # it is not a HTML tag. This means the user forgot to call it.
+        else if lib.isFunction next && !(next ? outPath)
+        then throw ''
+          You probably didn't mean to pass a function into the tag,
+          and forgot some parenthesis to actually call the function.
+
+          This is a common mistake, which usually looks like this:
+
+            <p>raw "Foo Bar Baz"<.p>
+
+          You probably meant to write something like this:
+
+            <p>(raw "Foo Bar Baz")<.p>
+        ''
+
+        # Not an attrset, list or a function.
         # Just add it onto the HTML after stringifying it.
         else if !lib.isAttrs next
         then this // {
